@@ -107,7 +107,7 @@ Feel free to fork this repository, add new features, and submit a **pull request
 
 ## **Deploy Your App**  
 The deployed version of CryptoTracker can be accessed at:  
-🔗 **[CryptoTracker Live](https://profound-bombolone-c626b5.netlify.app/)**  
+🔗 **[CryptoTracker Live](https://crypto-tracker-inky-nine.vercel.app/)**  
 
 ---
 
