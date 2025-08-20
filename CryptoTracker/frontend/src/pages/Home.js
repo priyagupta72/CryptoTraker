@@ -36,8 +36,12 @@
 //                 Crypto tracker help investors monitor and manage their digital assets, including cryptocurrencies and NFTs, with real-time updates and historical data.
 //                 </p>
 //                </div>
+
+
+
 import React from "react";
 import { Link } from "react-router-dom";
+import GuestSection from "../components/GuestSection";
 
 const Home = () => {
   return (
@@ -54,11 +58,13 @@ const Home = () => {
                   Your ultimate destination for tracking cryptocurrency prices and trends. Stay ahead with real-time data and insights.
                 </p>
                 <p className="mt-8">
+                  <GuestSection>
                   <Link to="/login">
                     <button className="py-4 px-12 bg-[#00FFEA] hover:bg-[#00FFEA] text-black font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg ">
                       Log in to explore
                     </button>
                   </Link>
+                  </GuestSection>
                 </p>
                 <p className="mt-6 text-gray-400 text-lg">
                   CryptoTracker helps investors monitor and manage their digital assets, including cryptocurrencies and NFTs, with real-time updates and historical data.
@@ -827,6 +833,7 @@ export default Home;
               </div>
             ))}
           </section>
+          <GuestSection>
 
           {/* 🔥 Ready to Dive Into Section (Updated) */}
           <section className="bg-[#00FFEA] text-black text-center py-14 rounded-lg shadow-lg shadow-cyan-500/50">
@@ -842,6 +849,7 @@ export default Home;
               </button>
             </Link>
           </section>
+          </GuestSection>
         </main>
       </div>
     </>
