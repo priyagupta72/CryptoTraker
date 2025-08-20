@@ -231,83 +231,61 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  function handleChange(event) {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+  function handleChange(e) {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
+  async function handleSubmit(e) {
+    e.preventDefault();
     try {
-      const data = await fetch(
-        "https://cryptotraker-3.onrender.com/api/v1/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch("https://cryptotraker-3.onrender.com/api/v1/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
 
-      const response = await data.json();
-
-      if (response.success === false) {
-        toast.error(response.message, { duration: 3000 });
-      } else if (response.success === true) {
-        dispatch(setuser(response.user)); // store actual user object
+      if (!data.success) {
+        toast.error(data.message, { duration: 3000 });
+      } else {
+        dispatch(setuser(data.user)); // store user object
         toast.success("Login successful!", { duration: 2000 });
-        navigate("/trending"); // redirect after login
+        navigate("/trending");
       }
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Something went wrong. Please try again.", { duration: 3000 });
+      console.error(error);
+      toast.error("Something went wrong", { duration: 3000 });
     }
   }
 
   return (
     <>
       <Toaster position="bottom-center" reverseOrder={false} />
-      <div className="min-h-screen bg-[#0d1117] text-gray-100 flex justify-center">
-        <div className="max-w-screen-xl m-0 sm:m-10 bg-[#151D27] shadow-lg shadow-cyan-500/50 sm:rounded-lg flex justify-center flex-1">
-          <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-            <h1 className="text-3xl font-bold text-white mb-6 text-center">Log in</h1>
-            <form onSubmit={handleSubmit} className="mx-auto max-w-xs">
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full px-8 py-4 rounded-lg font-medium bg-[#1C2531] border border-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-500 focus:bg-[#151D27] text-gray-100"
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-8 py-4 rounded-lg font-medium bg-[#1C2531] border border-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-500 focus:bg-[#151D27] text-gray-100 mt-5"
-              />
-              <button
-                type="submit"
-                className="mt-5 tracking-wide font-semibold bg-black hover:bg-black text-[#00FFEA] w-full py-4 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center shadow-md shadow-cyan-500/50"
-              >
-                <span>Log in</span>
-              </button>
-            </form>
-          </div>
-          <div className="flex-1 hidden lg:flex items-center justify-center bg-[#0d1117]">
-            <div
-              className="m-12 xl:m-16 w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage:
-                  'url("https://images.unsplash.com/photo-1639454276085-9f55d2db6570?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
-                minHeight: "50%",
-              }}
-            ></div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-[#0d1117] text-gray-100 flex justify-center items-center">
+        <form onSubmit={handleSubmit} className="bg-[#151D27] p-8 rounded-xl shadow-lg">
+          <h1 className="text-3xl font-bold text-white mb-6 text-center">Log in</h1>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className="w-full mb-4 p-3 rounded-lg bg-[#1C2531] border border-gray-700 text-white"
+          />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+            className="w-full mb-4 p-3 rounded-lg bg-[#1C2531] border border-gray-700 text-white"
+          />
+          <button type="submit" className="w-full py-3 bg-black text-[#00FFEA] rounded-lg font-semibold">
+            Log in
+          </button>
+        </form>
       </div>
     </>
   );

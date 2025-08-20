@@ -73,6 +73,7 @@ import { removeuser } from "../store/userSlice";
 function Navbar() {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const isLoggedIn = user !== null;
 
   function handleLogout() {
     dispatch(removeuser());
@@ -81,7 +82,6 @@ function Navbar() {
   return (
     <div className="bg-[#0d1117] border-b border-gray-700 w-full p-4">
       <nav className="flex justify-between items-center container mx-auto">
-        
         {/* Logo */}
         <Link to="/">
           <h1 className="cursor-pointer text-3xl font-extrabold text-white">
@@ -89,30 +89,24 @@ function Navbar() {
           </h1>
         </Link>
 
-        {/* Navigation Links - Visible when logged in */}
-        {user === "logged in" && (
+        {/* Navigation Links */}
+        {isLoggedIn && (
           <div className="flex gap-6 font-semibold text-lg text-gray-300">
             <Link to="/top10">
-              <p className="cursor-pointer hover:text-[#00FFEA] transition duration-300">
-                Top 10
-              </p>
+              <p className="cursor-pointer hover:text-[#00FFEA] transition duration-300">Top 10</p>
             </Link>
             <Link to="/trending">
-              <p className="cursor-pointer hover:text-[#00FFEA] transition duration-300">
-                Trending
-              </p>
+              <p className="cursor-pointer hover:text-[#00FFEA] transition duration-300">Trending</p>
             </Link>
             <Link to="/watchlist">
-              <p className="cursor-pointer hover:text-[#00FFEA] transition duration-300">
-                Watchlist
-              </p>
+              <p className="cursor-pointer hover:text-[#00FFEA] transition duration-300">Watchlist</p>
             </Link>
           </div>
         )}
 
-        {/* Login/Logout Buttons */}
+        {/* Login/Logout */}
         <div className="flex gap-4">
-          {user === "logged in" ? (
+          {isLoggedIn ? (
             <button
               onClick={handleLogout}
               className="bg-black text-[#00FFEA] hover:bg-[#222] font-semibold py-2 px-5 rounded-lg text-lg transition-transform duration-300 transform hover:scale-105 shadow-md shadow-cyan-500/30"
@@ -140,7 +134,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
-
-
-

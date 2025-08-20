@@ -119,44 +119,39 @@
 
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setuser } from "../store/userSlice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  function handleChange(event) {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
+  function handleChange(e) {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
+  async function handleSubmit(e) {
+    e.preventDefault();
     try {
-      const data = await fetch(
-        "https://cryptotraker-3.onrender.com/api/v1/createuser",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch("https://cryptotraker-3.onrender.com/api/v1/createuser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
 
-      const response = await data.json();
-
-      if (response.success === false) {
-        toast.error(response.message, { duration: 3000 });
-      } else if (response.success === true) {
-        dispatch(setuser(response.user)); // store actual user object
+      if (!data.success) {
+        toast.error(data.message, { duration: 3000 });
+      } else {
+        dispatch(setuser(data.user)); // store user object
         toast.success("Signup successful!", { duration: 2000 });
-        navigate("/trending"); // redirect after signup
+        navigate("/trending");
       }
     } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Something went wrong. Please try again.", { duration: 3000 });
+      console.error(error);
+      toast.error("Something went wrong", { duration: 3000 });
     }
   }
 
@@ -164,50 +159,39 @@ const SignIn = () => {
     <>
       <Toaster position="bottom-center" reverseOrder={false} />
       <div className="min-h-screen bg-[#0d1117] text-gray-100 flex justify-center items-center">
-        <div className="max-w-4xl w-full bg-[#151D27] shadow-lg rounded-xl flex overflow-hidden">
-          <div className="w-full lg:w-1/2 p-8">
-            <h1 className="text-3xl font-bold text-[#00FFEA] text-center">Sign Up</h1>
-            <form onSubmit={handleSubmit} className="mt-8">
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full mt-4 px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full mt-4 px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
-              />
-              <button
-                type="submit"
-                className="mt-6 w-full py-3 rounded-lg bg-black text-[#00FFEA] font-semibold transition-transform duration-300 transform hover:scale-105 shadow-md shadow-cyan-500/30"
-              >
-                Sign Up
-              </button>
-            </form>
-          </div>
-          <div
-            className="hidden lg:flex w-1/2 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                'url("https://images.unsplash.com/photo-1639454276085-9f55d2db6570?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
-            }}
-          ></div>
-        </div>
+        <form onSubmit={handleSubmit} className="bg-[#151D27] p-8 rounded-xl shadow-lg">
+          <h1 className="text-3xl font-bold text-[#00FFEA] mb-6 text-center">Sign Up</h1>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Name"
+            required
+            className="w-full mb-4 p-3 rounded-lg bg-[#1C2531] border border-gray-600 text-white"
+          />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className="w-full mb-4 p-3 rounded-lg bg-[#1C2531] border border-gray-600 text-white"
+          />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+            className="w-full mb-4 p-3 rounded-lg bg-[#1C2531] border border-gray-600 text-white"
+          />
+          <button type="submit" className="w-full py-3 bg-black text-[#00FFEA] rounded-lg font-semibold">
+            Sign Up
+          </button>
+        </form>
       </div>
     </>
   );
