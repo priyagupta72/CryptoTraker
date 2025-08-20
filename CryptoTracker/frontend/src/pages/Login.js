@@ -227,11 +227,7 @@ import { useNavigate } from "react-router-dom";
 import { setuser } from "../store/userSlice";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -241,20 +237,29 @@ const Login = () => {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const data = await fetch("https://cryptotraker-3.onrender.com/api/v1/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
 
-    const response = await data.json();
-    if (response.status === false) {
-      toast.error(response.message, { duration: 3000 });
-    } else if (response.status) {
-      dispatch(setuser(response.message));
-      navigate("/trending");
+    try {
+      const data = await fetch(
+        "https://cryptotraker-3.onrender.com/api/v1/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const response = await data.json();
+
+      if (response.success === false) {
+        toast.error(response.message, { duration: 3000 });
+      } else if (response.success === true) {
+        dispatch(setuser(response.user)); // store actual user object
+        toast.success("Login successful!", { duration: 2000 });
+        navigate("/trending"); // redirect after login
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong. Please try again.", { duration: 3000 });
     }
   }
 
@@ -264,51 +269,33 @@ const Login = () => {
       <div className="min-h-screen bg-[#0d1117] text-gray-100 flex justify-center">
         <div className="max-w-screen-xl m-0 sm:m-10 bg-[#151D27] shadow-lg shadow-cyan-500/50 sm:rounded-lg flex justify-center flex-1">
           <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-            <div className="mt-12 flex flex-col items-center">
-              <h1 className="text-3xl font-bold text-white mb-6 text-center">
-                Log in
-              </h1>
-              <div className="w-full flex-1 mt-8">
-                <form onSubmit={handleSubmit} className="mx-auto max-w-xs">
-                  <input
-                    className="w-full px-8 py-4 rounded-lg font-medium bg-[#1C2531] border border-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-500 focus:bg-[#151D27] text-gray-100"
-                    type="email"
-                    name="email"
-                    onChange={handleChange}
-                    value={formData.email}
-                    required
-                    placeholder="Email"
-                  />
-                  <input
-                    className="w-full px-8 py-4 rounded-lg font-medium bg-[#1C2531] border border-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-500 focus:bg-[#151D27] text-gray-100 mt-5"
-                    type="password"
-                    name="password"
-                    onChange={handleChange}
-                    value={formData.password}
-                    required
-                    placeholder="Password"
-                  />
-                  <button
-                    type="submit"
-                    className="mt-5 tracking-wide font-semibold bg-[black] hover:bg-[black] text-#00FFEA w-full py-4 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center shadow-md shadow-cyan-500/50"
-                  >
-                    <svg
-                      className="w-6 h-6 -ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                      <circle cx="8.5" cy={7} r={4} />
-                      <path d="M20 8v6M23 11h-6" />
-                    </svg>
-                    <span className="ml-3">Log in</span>
-                  </button>
-                </form>
-              </div>
-            </div>
+            <h1 className="text-3xl font-bold text-white mb-6 text-center">Log in</h1>
+            <form onSubmit={handleSubmit} className="mx-auto max-w-xs">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full px-8 py-4 rounded-lg font-medium bg-[#1C2531] border border-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-500 focus:bg-[#151D27] text-gray-100"
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full px-8 py-4 rounded-lg font-medium bg-[#1C2531] border border-gray-700 placeholder-gray-400 text-sm focus:outline-none focus:border-gray-500 focus:bg-[#151D27] text-gray-100 mt-5"
+              />
+              <button
+                type="submit"
+                className="mt-5 tracking-wide font-semibold bg-black hover:bg-black text-[#00FFEA] w-full py-4 rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center shadow-md shadow-cyan-500/50"
+              >
+                <span>Log in</span>
+              </button>
+            </form>
           </div>
           <div className="flex-1 hidden lg:flex items-center justify-center bg-[#0d1117]">
             <div
@@ -327,6 +314,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-

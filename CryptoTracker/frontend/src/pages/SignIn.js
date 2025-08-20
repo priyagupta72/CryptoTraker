@@ -124,35 +124,39 @@ import { useDispatch } from "react-redux";
 import { setuser } from "../store/userSlice";
 
 const SignIn = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function handleChange(event) {
     setFormData({ ...formData, [event.target.name]: event.target.value });
-    console.log(formData);
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const data = await fetch("https://cryptotraker-3.onrender.com/api/v1/createuser", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const data = await fetch(
+        "https://cryptotraker-3.onrender.com/api/v1/createuser",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
-    const response = await data.json();
-    if (response.status === false) {
-      toast.error(response.message, { duration: 3000 });
-    } else if (response.status) {
-      dispatch(setuser(response.message));
-      navigate("/trending");
+      const response = await data.json();
+
+      if (response.success === false) {
+        toast.error(response.message, { duration: 3000 });
+      } else if (response.success === true) {
+        dispatch(setuser(response.user)); // store actual user object
+        toast.success("Signup successful!", { duration: 2000 });
+        navigate("/trending"); // redirect after signup
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      toast.error("Something went wrong. Please try again.", { duration: 3000 });
     }
   }
 
@@ -161,36 +165,32 @@ const SignIn = () => {
       <Toaster position="bottom-center" reverseOrder={false} />
       <div className="min-h-screen bg-[#0d1117] text-gray-100 flex justify-center items-center">
         <div className="max-w-4xl w-full bg-[#151D27] shadow-lg rounded-xl flex overflow-hidden">
-          
-          {/* Left Side - Form */}
           <div className="w-full lg:w-1/2 p-8">
-            <h1 className="text-3xl font-bold text-[#00FFEA] text-center">
-              Sign Up
-            </h1>
+            <h1 className="text-3xl font-bold text-[#00FFEA] text-center">Sign Up</h1>
             <form onSubmit={handleSubmit} className="mt-8">
               <input
-                className="w-full px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
                 type="text"
-                placeholder="Name"
                 name="name"
+                placeholder="Name"
                 value={formData.name}
                 onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
               />
               <input
-                className="w-full mt-4 px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
                 type="email"
-                placeholder="Email"
                 name="email"
+                placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
+                className="w-full mt-4 px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
               />
               <input
-                className="w-full mt-4 px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
                 type="password"
-                placeholder="Password"
                 name="password"
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
+                className="w-full mt-4 px-4 py-3 rounded-lg bg-[#1C2531] border border-gray-600 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-[#00FFEA] transition"
               />
               <button
                 type="submit"
@@ -200,13 +200,13 @@ const SignIn = () => {
               </button>
             </form>
           </div>
-
-          {/* Right Side - Image */}
-          <div className="hidden lg:flex w-1/2 bg-cover bg-center" style={{
-            // backgroundImage: 'url("https://storage.getblock.io/web/blog/article-covers/Blockchain+vs+Cryptocurrency+Differences.svg")'
-            backgroundImage: 'url("https://images.unsplash.com/photo-1639454276085-9f55d2db6570?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")'
-          }}>
-          </div>
+          <div
+            className="hidden lg:flex w-1/2 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                'url("https://images.unsplash.com/photo-1639454276085-9f55d2db6570?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
+            }}
+          ></div>
         </div>
       </div>
     </>
